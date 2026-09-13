@@ -2,7 +2,7 @@ let gameData = {
     categories: [
         {
             name: "هنتر X هنتر",
-            image: "",
+            image: "images/hxh.jpg",
             questions: [
                 { points: 300, q: "ما اسم والد غون فريكس؟", a: "جين فريكس" },
                 { points: 300, q: "ما اسم الصديق المقرب لغون والذي ينتمي لعائلة قتلة متسلسلين؟", a: "كيلوا زولديك" },
@@ -14,7 +14,7 @@ let gameData = {
         },
         {
             name: "هجوم العمالقة",
-            image: "",
+            image: "images/aot.avif",
             questions: [
                 { points: 300, q: "ما اسم البطل الرئيسي في القصة؟", a: "إرين ييغر" },
                 { points: 300, q: "ما اسم الجدار الخارجي الذي تم تحطيمه في بداية القصة؟", a: "جدار ماريا" },
@@ -26,7 +26,7 @@ let gameData = {
         },
         {
             name: "جوجوتسو كايزن",
-            image: "",
+            image: "images/jjk.jpg",
             questions: [
                 { points: 300, q: "من هو الشخصية الرئيسية الذي ابتلع إصبع سوكونا؟", a: "يوجي إيتادوري" },
                 { points: 300, q: "ما اسم الساحر الأقوى والمعلم في ثانوية طوكيو للجوستسو؟", a: "ساتورو غوجو" },
@@ -38,7 +38,7 @@ let gameData = {
         },
         {
             name: "ون بيس",
-            image: "",
+            image: "images/onepiece.webp",
             questions: [
                 { points: 300, q: "ما هو حلم مونكي دي لوفي؟", a: "أن يصبح ملك القراصنة" },
                 { points: 300, q: "ما اسم سفينة طاقم قبعة القش الأولى؟", a: "غووي ميري (Going Merry)" },
@@ -50,7 +50,7 @@ let gameData = {
         },
         {
             name: "بليتش",
-            image: "",
+            image: "images/bleach.jpg",
             questions: [
                 { points: 300, q: "من هو بطل القصة الذي يمتلك قوى الشينيغامي؟", a: "إيتشيجو كوروساكي" },
                 { points: 300, q: "ما اسم الشينيغامي الأنثى التي سلمت قواها لإيتشيجو؟", a: "روكيا كوتشيكي" },
@@ -62,7 +62,7 @@ let gameData = {
         },
         {
             name: "قاتل الشياطين",
-            image: "",
+            image: "images/demonslayer.jpg",
             questions: [
                 { points: 300, q: "ما اسم أخت تانجيرو التي تحولت لشيطان؟", a: "نيزوكو" },
                 { points: 300, q: "ما هو سلاح قاتلي الشياطين الرئيسي؟", a: "سيف النيتشيرين" },
@@ -110,7 +110,7 @@ let gameData = {
         },
         {
             name: "المحقق كونان",
-            image: "",
+            image: "images/detective.jpg",
             questions: [
                 { points: 300, q: "ما اسم المحقق الذي تقلص وتحول لطفل؟", a: "سينشي كودو (كونان إيدوجاوا)" },
                 { points: 300, q: "ما اسم العصابة المسؤولة عن تقليصه؟", a: "المنظمة السوداء" },
@@ -122,7 +122,7 @@ let gameData = {
         },
         {
             name: "انمي عام",
-            image: "",
+            image: "images/anime.webp",
             questions: [
                 { points: 300, q: "ما هو الاستوديو الشهير الذي أنتج فيلم 'اسمك' (Your Name)؟", a: "ستوديو كوميكس ويف فيلمز" },
                 { points: 300, q: "ما هو مصطلح الرسوم المتحركة اليابانية؟", a: "أنمي" },
@@ -134,7 +134,7 @@ let gameData = {
         },
         {
             name: "أفلام",
-            image: "",
+            image: "images/cinema.webp",
             questions: [
                 { points: 300, q: "فيلم أنيميشن تدور أحداثه داخل مشاعر فتاة؟", a: "Inside Out (قلباً قالباً)" },
                 { points: 300, q: "ممثل بطولة سلسلة أفلام Mission Impossible؟", a: "توم كروز" },
@@ -146,7 +146,7 @@ let gameData = {
         },
         {
             name: "مسلسلات",
-            image: "",
+            image: "images/series.png",
             questions: [
                 { points: 300, q: "ما اسم المسلسل الشهير الذي تدور أحداثه حول لعبة مميتة برعاية جوائز مالية في كوريا؟", a: "لعبة الحبار (Squid Game)" },
                 { points: 300, q: "مسلسل خيال علمي تدور أحداثه حول عالم مقلوب وطفلة اسمها إيلفن؟", a: "أشياء غريبة (Stranger Things)" },
@@ -157,19 +157,8 @@ let gameData = {
             ]
         },
         {
-            name: "بوسترز أفلام",
-            questions: [
-                { points: 300, q: "فيلم اشتهر ببوستر يظهر فيه قرش ضخم يقترب من سباحة في السطح؟", a: "Fauces (الفك المفترس / Jaws)" },
-                { points: 300, q: "فيلم رعب كلاسيكي يظهر فيه وجه رجل يطل من شق باب مقطوع بفأس؟", a: "البريق (The Shining)" },
-                { points: 300, q: "فيلم خيال علمي يظهر فيه طفل ودراجة هوائية تطير أمام القمر؟", a: "إي تي (E.T.)" },
-                { points: 600, q: "فيلم دراما يظهر فيه سجينان مرفوعا الأيدي تحت المطر أمام سجن شوشانك؟", a: "الخلاص من شاوشانك (The Shawshank Redemption)" },
-                { points: 600, q: "فيلم جريمة يظهر فيه كرسي جلوسي وظل خلفي لشخصية دون كورليوني؟", a: "العراب (The Godfather)" },
-                { points: 900, q: "فيلم بطل خارق يظهر فيه الجوكر بعبارة 'Why So Serious؟'؟", a: "فارس الظلام (The Dark Knight)" }
-            ]
-        },
-        {
             name: "مارفل",
-            image: "",
+            image: "images/marvel.webp",
             questions: [
                 { points: 300, q: "ما اسم درع البطل الخارق الذي يرتديه ستيف روجرز؟", a: "كابتن أمريكا" },
                 { points: 300, q: "من هو بطل عالم مارفل الذي يرتدي بدلة حديدية من صنع توني ستارك؟", a: "آيبي مان / توني ستارك" },
@@ -181,7 +170,7 @@ let gameData = {
         },
         {
             name: "دي سي",
-            image: "",
+            image: "images/dc.webp",
             questions: [
                 { points: 300, q: "ما اسم المدينة الوهمية التي يحميها باتمان؟", a: "مدينة غوثام" },
                 { points: 300, q: "من هو البطل الخارق القادم من كوكب كريبتون وضعيف أمام الكريبتونايت؟", a: "سوبرمان" },
@@ -193,7 +182,7 @@ let gameData = {
         },
         {
             name: "جغرافيا",
-            image: "",
+            image: "images/geography.jpg",
             questions: [
                 { points: 300, q: "ما هي عاصمة دولة فرنسا؟", a: "باريس" },
                 { points: 300, q: "ما هو أكبر محيط على وجه الكوكب؟", a: "المحيط الهادئ" },
@@ -205,7 +194,7 @@ let gameData = {
         },
         {
             name: "معلومات عامة",
-            image: "",
+            image: "images/general.jpg",
             questions: [
                 { points: 300, q: "كم عدد عظام جسم الإنسان البالغ؟", a: "206 عظمة" },
                 { points: 300, q: "ما هو الغاز الأكثر غزارة في الغلاف الجوي للأرض؟", a: "النيتروجين" },
@@ -217,7 +206,7 @@ let gameData = {
         },
         {
             name: "تاريخ",
-            image: "",
+            image: "images/history.webp",
             questions: [
                 { points: 300, q: "في أي عام وقعت غزوة بدر الكبرى في الإسلام؟", a: "السنة الثانية للهجرة" },
                 { points: 300, q: "من هو أول الخلفاء الراشدين؟", a: "أبو بكر الصديق" },
@@ -227,8 +216,9 @@ let gameData = {
                 { points: 900, q: "في أي عام هبط الإنسان لأول مرة على سطح القمر؟", a: "1969" }
             ]
         },
-        {
+{
             name: "الصحة العامة",
+            image: "images/ health.jpg",
             questions: [
                 { points: 300, q: "كم عدد أكواب الماء الموصى بشربها تقريباً يومياً للجسم؟", a: "8 أكواب (حوالي 2 لتر)" },
                 { points: 300, q: "ما هي الفيتامينات التي يكتسبها الجسم مباشرة من ضوء الشمس؟", a: "فيتامين د" },
@@ -240,7 +230,7 @@ let gameData = {
         },
         {
             name: "صح ولا كيس",
-            image: "",
+            image: "images/health.jpg",
             questions: [
                 { points: 300, q: "السماء مفرغة من الهواء؟", a: "صح" },
                 { points: 300, q: "القرش ليس له عظام؟", a: "صح" },
@@ -252,12 +242,3 @@ let gameData = {
         }
     ]
 };
-
-function getGameData() {
-    let saved = localStorage.getItem('trivia_game_data');
-    if (saved) {
-        return JSON.parse(saved);
-    }
-    localStorage.setItem('trivia_game_data', JSON.stringify(gameData));
-    return gameData;
-}
