@@ -74,7 +74,7 @@ let gameData = {
         },
         {
             name: "دراغون بول",
-            image: "",
+            image: "images/dragonball.jpeg",
             questions: [
                 { points: 300, q: "ما اسم بطل القصة الرئيسي من سايان؟", a: "غوكو (كاكاروت)" },
                 { points: 300, q: "ما هي الكرات التي تجمع لتحقيق الأمنيات؟", a: "كرات الدراغون بول" },
@@ -86,7 +86,7 @@ let gameData = {
         },
         {
             name: "ناروتو",
-            image: "",
+            image: "images/naruto.webp",
             questions: [
                 { points: 300, q: "ما هو حلم ناروتو أوزوماكي؟", a: "أن يصبح هوكاغي" },
                 { points: 300, q: "ما اسم عُشيرة ساسكي؟", a: "أوتشيها" },
@@ -98,7 +98,7 @@ let gameData = {
         },
         {
             name: "بوكو نو هيرو",
-            image: "",
+            image: "images/bukunoherp.jpg",
             questions: [
                 { points: 300, q: "ما اسم البطل الرئيسي الذي ولد بدون قدرة؟", a: "إيزوكو ميدوريا (ديكو)" },
                 { points: 300, q: "ما اسم البطل رقم واحد ومعلم ميدوريا؟", a: "أولمايت" },
@@ -218,7 +218,7 @@ let gameData = {
         },
 {
             name: "الصحة العامة",
-            image: "images/ health.jpg",
+            image: "images/health.jpg",
             questions: [
                 { points: 300, q: "كم عدد أكواب الماء الموصى بشربها تقريباً يومياً للجسم؟", a: "8 أكواب (حوالي 2 لتر)" },
                 { points: 300, q: "ما هي الفيتامينات التي يكتسبها الجسم مباشرة من ضوء الشمس؟", a: "فيتامين د" },
@@ -230,7 +230,7 @@ let gameData = {
         },
         {
             name: "صح ولا كيس",
-            image: "images/health.jpg",
+            image: "",
             questions: [
                 { points: 300, q: "السماء مفرغة من الهواء؟", a: "صح" },
                 { points: 300, q: "القرش ليس له عظام؟", a: "صح" },
