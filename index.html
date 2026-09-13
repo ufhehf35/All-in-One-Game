@@ -7,19 +7,20 @@
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; color: white; margin: 0; padding: 20px; text-align: center; }
         h1 { color: #38bdf8; }
         
-        .screen-box { max-width: 600px; margin: 40px auto; background: #1e293b; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .screen-box { max-width: 650px; margin: 40px auto; background: #1e293b; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
         input { padding: 12px; margin: 10px 0; width: 100%; box-sizing: border-box; border-radius: 8px; border: 1px solid #475569; background: #334155; color: white; font-size: 16px; text-align: center; }
         
         /* Category Selector Grid */
         #category-select-screen { display: block; }
-        .cat-picker-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; }
+        .cat-picker-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; max-height: 350px; overflow-y: auto; padding: 5px; }
         .cat-card { background: #334155; border: 3px solid #475569; border-radius: 8px; padding: 15px 10px; cursor: pointer; transition: 0.2s; font-weight: bold; position: relative; overflow: hidden; min-height: 90px; display: flex; align-items: center; justify-content: center; }
         .cat-card img { position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; filter: brightness(0.5); }
-        .cat-card span { position: relative; z-index: 2; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); font-size: 15px; }
+        .cat-card span { position: relative; z-index: 2; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); font-size: 15px; color: white; }
         .cat-card.selected { border-color: #22c55e; background: #15803d; }
 
         #setup-screen { display: none; }
         #game-screen { display: none; }
+        #manager-screen { display: none; max-width: 800px; text-align: right; }
 
         /* Game Board */
         .board { display: grid; gap: 12px; max-width: 1200px; margin: 20px auto; }
@@ -43,7 +44,7 @@
         .team-score { font-weight: 900; color: #22c55e; font-size: 22px; }
 
         #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: #1e293b; padding: 40px; border-radius: 16px; max-width: 650px; width: 90%; border: 2px solid #334155; }
+        .modal-content { background: #1e293b; padding: 40px; border-radius: 16px; max-width: 650px; width: 90%; border: 2px solid #334155; text-align: center; }
         .modal-q { font-size: 32px; font-weight: bold; margin-bottom: 25px; line-height: 1.3; }
         .modal-a { font-size: 26px; color: #facc15; margin-bottom: 30px; display: none; font-weight: 600; }
         
@@ -52,9 +53,13 @@
         .success-btn { background: #16a34a; }
         .success-btn:hover { background: #15803d; }
         .secondary-btn { background: #64748b; }
+        .danger-btn { background: #dc2626; }
+        .danger-btn:hover { background: #b91c1c; }
 
-        .nav-admin { margin-top: 20px; }
-        .nav-admin a { color: #94a3b8; text-decoration: none; }
+        .nav-admin { margin-top: 20px; text-align: center; }
+        .nav-admin a { color: #38bdf8; text-decoration: none; cursor: pointer; font-weight: bold; }
+        
+        .cat-item-row { background: #334155; padding: 10px 15px; margin-bottom: 10px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; }
     </style>
 </head>
 <body>
@@ -62,19 +67,37 @@
     <!-- STEP 1: SELECT EXACTLY 6 CATEGORIES -->
     <div id="category-select-screen" class="screen-box">
         <h1>اختر أقسام اللعبة</h1>
-        <p style="color: #94a3b8;">يجب عليك اختيار **6 أقسام بالضبط** للبدء</p>
+        <p style="color: #94a3b8;">يجب عليك اختيار <b>6 أقسام بالضبط</b> للبدء</p>
         <div class="cat-picker-grid" id="cat-picker-container"></div>
         <div id="selection-counter" style="margin: 15px 0; font-weight: bold; color: #facc15;">تم اختيار: 0 / 6</div>
         <button class="btn success-btn" id="proceed-btn" onclick="goToSetup()" disabled style="width: 100%; opacity: 0.5;">التالي: إعداد الفرق 🚀</button>
         <div class="nav-admin">
-            <a href="admin.html">⚙️ الذهاب لوحة التحكم لإضافة أقسام وصور</a>
+            <a onclick="openCategoryManager()">⚙️ إدارة الأقسام (إضافة، تعديل، حذف)</a>
         </div>
     </div>
 
+    <!-- CATEGORY MANAGER SCREEN -->
+    <div id="manager-screen" class="screen-box">
+        <h1>إدارة الأقسام والأسئلة</h1>
+        <p style="color: #94a3b8;">أضف قسماً جديداً أو عدل أو احذف الأقسام الحالية مباشرة في الملف</p>
+        
+        <div style="background: #334155; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <h3>إضافة قسم جديد</h3>
+            <input type="text" id="new-cat-name" placeholder="اسم القسم الجديد">
+            <input type="text" id="new-cat-img" placeholder="رابط صورة القسم (اختياري)">
+            <button class="btn success-btn" onclick="addNewCategory()" style="width:100%;">إضافة القسم</button>
+        </div>
+
+        <h3>الأقسام الحالية</h3>
+        <div id="manager-cat-list" style="max-height: 250px; overflow-y: auto;"></div>
+
+        <button class="btn secondary-btn" onclick="closeCategoryManager()" style="width:100%; margin-top:15px;">عودة لاختيار الأقسام 🔙</button>
+    </div>
+
     <!-- STEP 2: SETUP TEAMS AND PLAYERS -->
-    <div id="setup-screen" class="screen-box">
-        <h1>إعداد الفرق والمشاركين</h1>
-        <p style="color: #94a3b8;">أدخل أسماء الفرق وأسماء اللاعبين لتظهر طوال اللعبة</p>
+    <div id="setup-screen" class="screen-box" style="text-align: right;">
+        <h1 style="text-align: center;">إعداد الفرق والمشاركين</h1>
+        <p style="text-align: center; color: #94a3b8;">أدخل أسماء الفرق وأسماء اللاعبين لتظهر طوال اللعبة</p>
         
         <h3>الفريق الأول</h3>
         <input type="text" id="t1-name" placeholder="اسم الفريق الأول (مثلاً: الصقور)">
@@ -126,7 +149,7 @@
 
     <script src="questions.js"></script>
     <script>
-        let gameData = getGameData();
+        // Use local gameData straight from questions.js without external localstorage syncing
         let selectedCategories = [];
         let scores = { t1: 0, t2: 0 };
         let gameInfo = { t1: "الفريق 1", t2: "الفريق 2", p1: "", p2: "" };
@@ -137,6 +160,8 @@
         function renderCategoryPicker() {
             let container = document.getElementById('cat-picker-container');
             container.innerHTML = '';
+            selectedCategories = []; // reset selection on render
+            
             gameData.categories.forEach((cat, index) => {
                 let card = document.createElement('div');
                 card.className = 'cat-card';
@@ -146,6 +171,7 @@
                 card.innerHTML = `${imgHtml}<span>${cat.name}</span>`;
                 container.appendChild(card);
             });
+            updateCounterUI();
         }
 
         function toggleCategorySelection(index, cardElement) {
@@ -161,7 +187,10 @@
                 selectedCategories.push(index);
                 cardElement.classList.add('selected');
             }
+            updateCounterUI();
+        }
 
+        function updateCounterUI() {
             let count = selectedCategories.length;
             document.getElementById('selection-counter').innerText = `تم اختيار: ${count} / 6`;
             
@@ -172,6 +201,83 @@
             } else {
                 proceedBtn.disabled = true;
                 proceedBtn.style.opacity = '0.5';
+            }
+        }
+
+        function openCategoryManager() {
+            document.getElementById('category-select-screen').style.display = 'none';
+            document.getElementById('manager-screen').style.display = 'block';
+            renderManagerList();
+        }
+
+        function closeCategoryManager() {
+            document.getElementById('manager-screen').style.display = 'none';
+            document.getElementById('category-select-screen').style.display = 'block';
+            renderCategoryPicker();
+        }
+
+        function renderManagerList() {
+            let listContainer = document.getElementById('manager-cat-list');
+            listContainer.innerHTML = '';
+            gameData.categories.forEach((cat, idx) => {
+                let row = document.createElement('div');
+                row.className = 'cat-item-row';
+                row.innerHTML = `
+                    <span><b>${cat.name}</b> (${cat.questions.length} أسئلة)</span>
+                    <div>
+                        <button class="btn" style="padding:5px 10px; font-size:14px;" onclick="editCategory(${idx})">تعديل الاسم/الصورة</button>
+                        <button class="btn danger-btn" style="padding:5px 10px; font-size:14px;" onclick="deleteCategory(${idx})">حذف</button>
+                    </div>
+                `;
+                listContainer.appendChild(row);
+            });
+        }
+
+        function addNewCategory() {
+            let nameInput = document.getElementById('new-cat-name');
+            let imgInput = document.getElementById('new-cat-img');
+            let name = nameInput.value.trim();
+            let image = imgInput.value.trim();
+
+            if (!name) {
+                alert("يرجى إدخال اسم القسم على الأقل!");
+                return;
+            }
+
+            // Default 6 placeholder questions if added manually
+            let defaultQuestions = [
+                { points: 300, q: "سؤال 1 سهل؟", a: "الإجابة 1" },
+                { points: 300, q: "سؤال 2 سهل؟", a: "الإجابة 2" },
+                { points: 300, q: "سؤال 3 سهل؟", a: "الإجابة 3" },
+                { points: 600, q: "سؤال 4 متوسط؟", a: "الإجابة 4" },
+                { points: 600, q: "سؤال 5 متوسط؟", a: "الإجابة 5" },
+                { points: 900, q: "سؤال 6 صعب؟", a: "الإجابة 6" }
+            ];
+
+            gameData.categories.push({ name, image, questions: defaultQuestions });
+            nameInput.value = '';
+            imgInput.value = '';
+            renderManagerList();
+            alert("تمت إضافة القسم بنجاح! (ملاحظة: لتثبيته بشكل دائم، انسخ كود questions.js الجديد وضعه في ملفك).");
+        }
+
+        function editCategory(idx) {
+            let cat = gameData.categories[idx];
+            let newName = prompt("أدخل الاسم الجديد للقسم:", cat.name);
+            if (newName !== null) {
+                cat.name = newName.trim() || cat.name;
+            }
+            let newImg = prompt("أدخل رابط صورة القسم الجديد (أو اتركه فارغاً):", cat.image);
+            if (newImg !== null) {
+                cat.image = newImg.trim();
+            }
+            renderManagerList();
+        }
+
+        function deleteCategory(idx) {
+            if (confirm(`هل أنت متأكد من حذف قسم "${gameData.categories[idx].name}"؟`)) {
+                gameData.categories.splice(idx, 1);
+                renderManagerList();
             }
         }
 
@@ -287,6 +393,7 @@
             }
         }
 
+        // Initialize display
         renderCategoryPicker();
     </script>
 </body>
