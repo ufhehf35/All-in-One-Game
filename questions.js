@@ -98,7 +98,7 @@ let gameData = {
         },
         {
             name: "بوكو نو هيرو",
-            image: "images/bukunoherp.jpg",
+            image: "images/bukunohero.jpg",
             questions: [
                 { points: 300, q: "ما اسم البطل الرئيسي الذي ولد بدون قدرة؟", a: "إيزوكو ميدوريا (ديكو)" },
                 { points: 300, q: "ما اسم البطل رقم واحد ومعلم ميدوريا؟", a: "أولمايت" },
