@@ -2,207 +2,203 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>لعبة المسابقات التفاعلية - تصميم جديد</title>
+    <title>لعبة المسابقات التفاعلية</title>
     <style>
-        /* General Styling */
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #0f172a;
-            color: white;
-            margin: 0;
-            padding: 20px;
-            text-align: center;
-        }
-
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0f172a; color: white; margin: 0; padding: 20px; text-align: center; }
         h1 { color: #38bdf8; }
+        
+        .screen-box { max-width: 600px; margin: 40px auto; background: #1e293b; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        input { padding: 12px; margin: 10px 0; width: 100%; box-sizing: border-box; border-radius: 8px; border: 1px solid #475569; background: #334155; color: white; font-size: 16px; text-align: center; }
+        
+        /* Category Selector Grid */
+        #category-select-screen { display: block; }
+        .cat-picker-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; }
+        .cat-card { background: #334155; border: 3px solid #475569; border-radius: 8px; padding: 15px 10px; cursor: pointer; transition: 0.2s; font-weight: bold; position: relative; overflow: hidden; min-height: 90px; display: flex; align-items: center; justify-content: center; }
+        .cat-card img { position: absolute; top:0; left:0; width:100%; height:100%; object-fit: cover; filter: brightness(0.5); }
+        .cat-card span { position: relative; z-index: 2; text-shadow: 1px 1px 3px rgba(0,0,0,0.9); font-size: 15px; }
+        .cat-card.selected { border-color: #22c55e; background: #15803d; }
 
-        /* Setup Screen */
-        #setup-screen { max-width: 500px; margin: 50px auto; background: #1e293b; padding: 30px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        input { padding: 12px; margin: 10px 0; width: 100%; box-sizing: border-box; border-radius: 8px; border: 1px solid #475569; background: #334155; color: white; font-size: 16px; }
-        input:focus { outline: none; border-color: #38bdf8; }
-
-        /* Game Screen */
+        #setup-screen { display: none; }
         #game-screen { display: none; }
-        
-        /* Game Board Styling */
-        .board {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr); /* Default, will be overridden by JS */
-            gap: 12px;
-            max-width: 1200px;
-            margin: 30px auto;
-        }
 
-        /* Category Header - New Styling */
-        .col-header {
-            position: relative;
-            min-height: 150px; /* Tall headers to show images */
-            border-radius: 10px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-            border-bottom: none; /* Removed previous border */
-        }
+        /* Game Board */
+        .board { display: grid; gap: 12px; max-width: 1200px; margin: 20px auto; }
+        .col-header { position: relative; min-height: 130px; border-radius: 10px; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .col-header-img { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(0.6); z-index: 1; }
+        .col-header span { position: relative; z-index: 2; font-size: 18px; font-weight: 800; color: white; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); padding: 5px; }
 
-        /* Category Image Background */
-        .col-header-img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            filter: brightness(0.6); /* Darken image for text readability */
-            z-index: 1;
-        }
+        .tile { background: #1e293b; color: #e2e8f0; font-size: 26px; font-weight: 700; padding: 25px 0; border-radius: 8px; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); border: 1px solid #334155; margin-top: 4px; }
+        .tile:not(.used):hover { background: #334155; transform: translateY(-3px); }
+        .tile.used { background: #0f172a; color: #475569; cursor: not-allowed; text-decoration: line-through; border-color: #1e293b; }
 
-        /* Category Text - On top of image */
-        .col-header span {
-            position: relative;
-            z-index: 2;
-            font-size: 20px;
-            font-weight: 800;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.8); /* Strong shadow for contrast */
-            padding: 10px;
-            background: rgba(0,0,0,0.3); /* Semi-transparent background behind text */
-            border-radius: 4px;
-        }
+        .tile[data-points="900"] { border-top: 4px solid #ef4444; }
+        .tile[data-points="600"] { border-top: 4px solid #eab308; }
+        .tile[data-points="300"] { border-top: 4px solid #22c55e; }
 
-        /* Point Tiles - New Styling with colored borders */
-        .tile {
-            background: #1e293b;
-            color: #e2e8f0; /* Slightly lighter than pure white */
-            font-size: 28px;
-            font-weight: 700;
-            padding: 30px 0;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-            position: relative;
-            border: 1px solid #334155; /* Base border */
-            margin-top: 4px; /* Space for top border indicator */
-        }
-        
-        /* Hover Effect */
-        .tile:not(.used):hover {
-            background: #334155;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 10px rgba(0,0,0,0.3);
-        }
+        /* Scoreboard with Player Names visible */
+        .scoreboard { display: flex; justify-content: space-around; background: #1e293b; padding: 15px; border-radius: 12px; max-width: 900px; margin: 0 auto 20px auto; font-size: 18px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .team-box { text-align: center; }
+        .team-title { font-weight: bold; color: #38bdf8; font-size: 20px; }
+        .team-players-text { font-size: 14px; color: #94a3b8; margin-top: 4px; background: #0f172a; padding: 3px 8px; border-radius: 4px; }
+        .team-score { font-weight: 900; color: #22c55e; font-size: 22px; }
 
-        /* Used Tile */
-        .tile.used {
-            background: #0f172a;
-            color: #475569;
-            cursor: not-allowed;
-            border-color: #1e293b;
-            box-shadow: none;
-            text-decoration: line-through;
-        }
-
-        /* Colored Top Borders based on points */
-        .tile[data-points="900"] { border-top: 4px solid #ef4444; } /* Red */
-        .tile[data-points="600"] { border-top: 4px solid #eab308; } /* Yellow */
-        .tile[data-points="300"] { border-top: 4px solid #22c55e; } /* Green */
-        
-        /* Scoreboard Styling */
-        .scoreboard {
-            display: flex;
-            justify-content: space-around;
-            background: #1e293b;
-            padding: 20px;
-            border-radius: 12px;
-            max-width: 800px;
-            margin: 0 auto 30px auto;
-            font-size: 22px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-        .team-score { font-weight: 900; color: #38bdf8; }
-
-        /* Modal (Question View) Styling */
         #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: #1e293b; padding: 50px; border-radius: 16px; max-width: 700px; width: 90%; border: 2px solid #334155; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
-        .modal-q { font-size: 36px; font-weight: bold; margin-bottom: 30px; line-height: 1.4; color: #f1f5f9; }
-        .modal-a { font-size: 30px; color: #facc15; margin-bottom: 40px; display: none; font-weight: 600; }
+        .modal-content { background: #1e293b; padding: 40px; border-radius: 16px; max-width: 650px; width: 90%; border: 2px solid #334155; }
+        .modal-q { font-size: 32px; font-weight: bold; margin-bottom: 25px; line-height: 1.3; }
+        .modal-a { font-size: 26px; color: #facc15; margin-bottom: 30px; display: none; font-weight: 600; }
         
-        /* Buttons */
-        button.btn { background: #0284c7; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; margin: 10px; transition: 0.2s; font-weight: bold;}
-        button.btn:hover { background: #0369a1; transform: translateY(-2px); }
+        button.btn { background: #0284c7; color: white; padding: 12px 24px; border: none; border-radius: 8px; font-size: 18px; cursor: pointer; margin: 8px; font-weight: bold; transition: 0.2s; }
+        button.btn:hover { background: #0369a1; }
         .success-btn { background: #16a34a; }
         .success-btn:hover { background: #15803d; }
         .secondary-btn { background: #64748b; }
-        .secondary-btn:hover { background: #475569; }
 
-        .nav-admin { margin-top: 30px; font-size: 16px; }
-        .nav-admin a { color: #94a3b8; text-decoration: none; padding: 5px; }
-        .nav-admin a:hover { color: #e2e8f0; text-decoration: underline; }
+        .nav-admin { margin-top: 20px; }
+        .nav-admin a { color: #94a3b8; text-decoration: none; }
     </style>
 </head>
 <body>
 
-    <div id="setup-screen">
-        <h1>إعداد الفرق</h1>
-        <p style="color: #94a3b8; margin-bottom: 20px;">أدخل أسماء الفرق أدناه لبدء اللعبة.</p>
-        
-        <input type="text" id="t1-name" placeholder="اسم الفريق الأول (مثلاً: الصقور)">
-        <input type="text" id="t2-name" placeholder="اسم الفريق الثاني (مثلاً: النمور)">
-
-        <br><br>
-        <button class="btn success-btn" onclick="startGame()" style="width: 100%; padding: 15px; font-size: 20px;">ابدأ اللعبة 🚀</button>
-        
+    <!-- STEP 1: SELECT EXACTLY 6 CATEGORIES -->
+    <div id="category-select-screen" class="screen-box">
+        <h1>اختر أقسام اللعبة</h1>
+        <p style="color: #94a3b8;">يجب عليك اختيار **6 أقسام بالضبط** للبدء</p>
+        <div class="cat-picker-grid" id="cat-picker-container"></div>
+        <div id="selection-counter" style="margin: 15px 0; font-weight: bold; color: #facc15;">تم اختيار: 0 / 6</div>
+        <button class="btn success-btn" id="proceed-btn" onclick="goToSetup()" disabled style="width: 100%; opacity: 0.5;">التالي: إعداد الفرق 🚀</button>
         <div class="nav-admin">
-            <a href="admin.html">⚙️ الذهاب لوحة التحكم (تعديل الأسئلة)</a>
+            <a href="admin.html">⚙️ الذهاب لوحة التحكم لإضافة أقسام وصور</a>
         </div>
     </div>
 
+    <!-- STEP 2: SETUP TEAMS AND PLAYERS -->
+    <div id="setup-screen" class="screen-box">
+        <h1>إعداد الفرق والمشاركين</h1>
+        <p style="color: #94a3b8;">أدخل أسماء الفرق وأسماء اللاعبين لتظهر طوال اللعبة</p>
+        
+        <h3>الفريق الأول</h3>
+        <input type="text" id="t1-name" placeholder="اسم الفريق الأول (مثلاً: الصقور)">
+        <input type="text" id="t1-players" placeholder="أسماء اللاعبين (مثلاً: أحمد، خالد، محمد)">
+
+        <h3>الفريق الثاني</h3>
+        <input type="text" id="t2-name" placeholder="اسم الفريق الثاني (مثلاً: النمور)">
+        <input type="text" id="t2-players" placeholder="أسماء اللاعبين (مثلاً: عمر، علي، يوسف)">
+
+        <br><br>
+        <button class="btn success-btn" onclick="startGame()" style="width: 100%;">ابدأ اللعبة الفعلية 🚀</button>
+    </div>
+
+    <!-- STEP 3: GAME BOARD -->
     <div id="game-screen">
         <h1>لعبة المسابقات</h1>
         <div class="scoreboard">
-            <div><span id="label-t1">الفريق 1</span>: <span id="score-t1" class="team-score">0</span></div>
-            <div><span id="label-t2">الفريق 2</span>: <span id="score-t2" class="team-score">0</span></div>
+            <div class="team-box">
+                <div class="team-title" id="label-t1">الفريق 1</div>
+                <div class="team-players-text" id="display-players-t1">-</div>
+                النقاط: <span id="score-t1" class="team-score">0</span>
+            </div>
+            <div class="team-box">
+                <div class="team-title" id="label-t2">الفريق 2</div>
+                <div class="team-players-text" id="display-players-t2">-</div>
+                النقاط: <span id="score-t2" class="team-score">0</span>
+            </div>
         </div>
 
         <div class="board" id="board-grid"></div>
     </div>
 
+    <!-- MODAL QUESTION WINDOW -->
     <div id="modal">
         <div class="modal-content">
-            <div id="modal-points" style="color: #facc15; font-weight: bold; margin-bottom: 15px; font-size: 24px;"></div>
+            <div id="modal-points" style="color: #facc15; font-weight: bold; margin-bottom: 10px; font-size: 22px;"></div>
             <div class="modal-q" id="modal-question-text">السؤال هنا...</div>
             <button class="btn" id="show-ans-btn" onclick="revealAnswer()">إظهار الإجابة</button>
             <div class="modal-a" id="modal-answer-text">الإجابة هنا...</div>
             
-            <div id="scoring-controls" style="display:none; margin-top: 30px; border-top: 1px solid #334155; padding-top: 20px;">
-                <p style="margin-bottom: 15px; font-size: 18px;">من حصل على النقاط؟</p>
-                <button class="btn success-btn" id="btn-give-t1" onclick="awardPoints(1)">نقطة لـ <span class="name-t1"></span></button>
-                <button class="btn success-btn" id="btn-give-t2" onclick="awardPoints(2)">نقطة لـ <span class="name-t2"></span></button>
-                <button class="btn secondary-btn" onclick="closeModal()" style="background: #475569;">لم يحصل أحد (تخطي)</button>
+            <div id="scoring-controls" style="display:none; margin-top: 20px; border-top: 1px solid #334155; padding-top: 15px;">
+                <p>من حصل على النقاط؟</p>
+                <button class="btn success-btn" onclick="awardPoints(1)">نقطة لـ <span class="name-t1"></span></button>
+                <button class="btn success-btn" onclick="awardPoints(2)">نقطة لـ <span class="name-t2"></span></button>
+                <button class="btn secondary-btn" onclick="closeModal()">تخطي (لا أحد)</button>
             </div>
         </div>
     </div>
 
     <script src="questions.js"></script>
     <script>
-        gameData = getGameData();
+        let gameData = getGameData();
+        let selectedCategories = [];
         let scores = { t1: 0, t2: 0 };
-        let teamNames = { t1: "الفريق 1", t2: "الفريق 2" };
+        let gameInfo = { t1: "الفريق 1", t2: "الفريق 2", p1: "", p2: "" };
         let currentPoints = 0;
         let activeTileElement = null;
+
+        // Render Category Picker on load
+        function renderCategoryPicker() {
+            let container = document.getElementById('cat-picker-container');
+            container.innerHTML = '';
+            gameData.categories.forEach((cat, index) => {
+                let card = document.createElement('div');
+                card.className = 'cat-card';
+                card.onclick = () => toggleCategorySelection(index, card);
+                
+                let imgHtml = cat.image ? `<img src="${cat.image}">` : '';
+                card.innerHTML = `${imgHtml}<span>${cat.name}</span>`;
+                container.appendChild(card);
+            });
+        }
+
+        function toggleCategorySelection(index, cardElement) {
+            let idx = selectedCategories.indexOf(index);
+            if (idx > -1) {
+                selectedCategories.splice(idx, 1);
+                cardElement.classList.remove('selected');
+            } else {
+                if (selectedCategories.length >= 6) {
+                    alert("يمكنك اختيار 6 أقسام فقط لا غير!");
+                    return;
+                }
+                selectedCategories.push(index);
+                cardElement.classList.add('selected');
+            }
+
+            let count = selectedCategories.length;
+            document.getElementById('selection-counter').innerText = `تم اختيار: ${count} / 6`;
+            
+            let proceedBtn = document.getElementById('proceed-btn');
+            if (count === 6) {
+                proceedBtn.disabled = false;
+                proceedBtn.style.opacity = '1';
+            } else {
+                proceedBtn.disabled = true;
+                proceedBtn.style.opacity = '0.5';
+            }
+        }
+
+        function goToSetup() {
+            if (selectedCategories.length !== 6) return;
+            document.getElementById('category-select-screen').style.display = 'none';
+            document.getElementById('setup-screen').style.display = 'block';
+        }
 
         function startGame() {
             let t1 = document.getElementById('t1-name').value.trim();
             let t2 = document.getElementById('t2-name').value.trim();
-            if(t1) teamNames.t1 = t1;
-            if(t2) teamNames.t2 = t2;
+            let p1 = document.getElementById('t1-players').value.trim();
+            let p2 = document.getElementById('t2-players').value.trim();
 
-            document.getElementById('label-t1').innerText = teamNames.t1;
-            document.getElementById('label-t2').innerText = teamNames.t2;
-            document.querySelectorAll('.name-t1').forEach(el => el.innerText = teamNames.t1);
-            document.querySelectorAll('.name-t2').forEach(el => el.innerText = teamNames.t2);
+            if (t1) gameInfo.t1 = t1;
+            if (t2) gameInfo.t2 = t2;
+            gameInfo.p1 = p1 ? `اللاعبون: ${p1}` : 'لا يوجد لاعبون مسجلون';
+            gameInfo.p2 = p2 ? `اللاعبون: ${p2}` : 'لا يوجد لاعبون مسجلون';
+
+            document.getElementById('label-t1').innerText = gameInfo.t1;
+            document.getElementById('label-t2').innerText = gameInfo.t2;
+            document.getElementById('display-players-t1').innerText = gameInfo.p1;
+            document.getElementById('display-players-t2').innerText = gameInfo.p2;
+
+            document.querySelectorAll('.name-t1').forEach(el => el.innerText = gameInfo.t1);
+            document.querySelectorAll('.name-t2').forEach(el => el.innerText = gameInfo.t2);
 
             document.getElementById('setup-screen').style.display = 'none';
             document.getElementById('game-screen').style.display = 'block';
@@ -213,42 +209,34 @@
         function buildBoard() {
             let grid = document.getElementById('board-grid');
             grid.innerHTML = '';
+            grid.style.gridTemplateColumns = `repeat(6, 1fr)`;
 
-            let numCols = gameData.categories.length;
-            grid.style.gridTemplateColumns = `repeat(${numCols}, 1fr)`;
+            let chosenCats = selectedCategories.map(i => gameData.categories[i]);
 
-            // 1. Add Category Headers
-            gameData.categories.forEach(cat => {
+            // Headers
+            chosenCats.forEach(cat => {
                 let header = document.createElement('div');
                 header.className = 'col-header';
-                
-                // Handle images (URL or Base64)
-                let imgHtml = cat.image ? `<img src="${cat.image}" alt="${cat.name}" class="col-header-img">` : '';
-                
+                let imgHtml = cat.image ? `<img src="${cat.image}" class="col-header-img">` : '';
                 header.innerHTML = `${imgHtml}<span>${cat.name}</span>`;
                 grid.appendChild(header);
             });
 
-            // 2. Find max questions length to build rows correctly
-            let maxLen = 0;
-            if (gameData.categories.length > 0) {
-                 maxLen = Math.max(...gameData.categories.map(c => c.questions.length), 0);
-            }
+            let maxLen = Math.max(...chosenCats.map(c => c.questions.length), 0);
 
-            // 3. Build Tiles row by row, column by column
+            // Tiles
             for (let i = 0; i < maxLen; i++) {
-                gameData.categories.forEach((cat, cIndex) => {
+                chosenCats.forEach((cat, cIndex) => {
                     let tile = document.createElement('div');
                     let qObj = cat.questions[i];
                     
                     if (qObj) {
                         tile.className = 'tile';
                         tile.innerText = qObj.points;
-                        tile.setAttribute('data-points', qObj.points); // For CSS styling
-                        tile.onclick = () => openQuestion(cIndex, i, tile);
+                        tile.setAttribute('data-points', qObj.points);
+                        tile.onclick = () => openQuestion(chosenCats, cIndex, i, tile);
                     } else {
-                        // Empty tile if this category has fewer questions
-                        tile.className = 'tile used'; 
+                        tile.className = 'tile used';
                         tile.innerText = "-";
                     }
                     grid.appendChild(tile);
@@ -256,11 +244,11 @@
             }
         }
 
-        function openQuestion(cIndex, qIndex, tileElement) {
+        function openQuestion(chosenCats, cIndex, qIndex, tileElement) {
             if (tileElement.classList.contains('used')) return;
             
             activeTileElement = tileElement;
-            let qObj = gameData.categories[cIndex].questions[qIndex];
+            let qObj = chosenCats[cIndex].questions[qIndex];
             currentPoints = qObj.points;
 
             document.getElementById('modal-points').innerText = `${currentPoints} نقطة`;
@@ -295,10 +283,11 @@
             document.getElementById('modal').style.display = 'none';
             if (activeTileElement) {
                 activeTileElement.classList.add('used');
-                activeTileElement.innerText = "تم"; // Change text instead of just ✓
-                tile.onclick = null; // Remove click handler entirely
+                activeTileElement.innerText = "✓";
             }
         }
+
+        renderCategoryPicker();
     </script>
 </body>
 </html>
