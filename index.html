@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>لعبة المسابقات التفاعلية</title>
+    <style>
+        body { font-family: Tahoma, sans-serif; background: #0f172a; color: white; margin: 0; padding: 20px; text-align: center; }
+        h1 { color: #38bdf8; }
+        
+        #setup-screen { max-width: 500px; margin: 50px auto; background: #1e293b; padding: 30px; border-radius: 12px; }
+        input { padding: 10px; margin: 10px; width: 80%; border-radius: 5px; border: none; background: #334155; color: white; text-align: center; font-size: 16px; }
+        
+        #game-screen { display: none; }
+        .board { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; max-width: 1200px; margin: 20px auto; }
+        .col-header { background: #1e293b; padding: 10px 5px; font-weight: bold; border-radius: 6px; font-size: 14px; min-height: 50px; display: flex; flex-direction: column; align-items: center; justify-content: center; border-bottom: 4px solid #38bdf8; gap: 5px; }
+        .col-header img { width: 30px; height: 30px; object-fit: cover; border-radius: 50%; }
+        
+        .tile { background: #1e293b; color: #38bdf8; font-size: 24px; font-weight: bold; padding: 25px 0; border-radius: 6px; cursor: pointer; transition: 0.2s; border-left: 4px solid #f59e0b; }
+        .tile:hover { background: #334155; transform: scale(1.03); }
+        .tile.used { background: #0f172a; color: #475569; cursor: not-allowed; border-left-color: #334155; }
+
+        .scoreboard { display: flex; justify-content: space-around; background: #1e293b; padding: 15px; border-radius: 8px; max-width: 800px; margin: 0 auto 20px auto; font-size: 20px; }
+        .team-score { font-weight: bold; color: #22c55e; }
+
+        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); justify-content: center; align-items: center; }
+        .modal-content { background: #1e293b; padding: 40px; border-radius: 12px; max-width: 600px; width: 90%; }
+        .modal-q { font-size: 28px; margin-bottom: 20px; }
+        .modal-a { font-size: 24px; color: #facc15; margin-bottom: 30px; display: none; }
+        
+        button.btn { background: #0284c7; color: white; padding: 10px 20px; border: none; border-radius: 6px; font-size: 18px; cursor: pointer; margin: 5px; }
+        button.btn:hover { background: #0369a1; }
+        .nav-admin { margin-top: 20px; }
+        .nav-admin a { color: #94a3b8; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+    <div id="setup-screen">
+        <h1>إعداد الفرق والمشاركين</h1>
+        <p>أدخل أسماء الفرق وأسماء اللاعبين لكل فريق</p>
+        
+        <h3>الفريق الأول</h3>
+        <input type="text" id="t1-name" placeholder="اسم الفريق الأول (مثلاً: الصقور)">
+        <input type="text" id="t1-players" placeholder="أسماء اللاعبين">
+
+        <h3>الفريق الثاني</h3>
+        <input type="text" id="t2-name" placeholder="اسم الفريق الثاني (مثلاً: النمور)">
+        <input type="text" id="t2-players" placeholder="أسماء اللاعبين">
+
+        <br><br>
+        <button class="btn" onclick="startGame()" style="background: #22c55e; width: 80%;">ابدأ اللعبة 🚀</button>
+        
+        <div class="nav-admin">
+            <a href="admin.html">⚙️ الذهاب لوحة التحكم (تعديل الأسئلة)</a>
+        </div>
+    </div>
+
+    <div id="game-screen">
+        <h1>لعبة المسابقات</h1>
+        <div class="scoreboard">
+            <div><span id="label-t1">الفريق 1</span>: <span id="score-t1" class="team-score">0</span> نقطة</div>
+            <div><span id="label-t2">الفريق 2</span>: <span id="score-t2" class="team-score">0</span> نقطة</div>
+        </div>
+
+        <div class="board" id="board-grid"></div>
+    </div>
+
+    <div id="modal">
+        <div class="modal-content">
+            <div id="modal-points" style="color: #f59e0b; font-weight: bold; margin-bottom: 10px;"></div>
+            <div class="modal-q" id="modal-question-text">السؤال هنا...</div>
+            <button class="btn" id="show-ans-btn" onclick="revealAnswer()">إظهار الإجابة</button>
+            <div class="modal-a" id="modal-answer-text">الإجابة هنا...</div>
+            
+            <div id="scoring-controls" style="display:none; margin-top: 20px;">
+                <p>من حصل على النقاط؟</p>
+                <button class="btn" id="btn-give-t1" onclick="awardPoints(1)">نقطة لـ <span class="name-t1"></span></button>
+                <button class="btn" id="btn-give-t2" onclick="awardPoints(2)">نقطة لـ <span class="name-t2"></span></button>
+                <button class="btn" onclick="closeModal()" style="background: #64748b;">تخطي</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="questions.js"></script>
+    <script>
+        gameData = getGameData();
+        let scores = { t1: 0, t2: 0 };
+        let teamNames = { t1: "الفريق 1", t2: "الفريق 2" };
+        let currentPoints = 0;
+        let activeTileElement = null;
+
+        function startGame() {
+            let t1 = document.getElementById('t1-name').value.trim();
+            let t2 = document.getElementById('t2-name').value.trim();
+            if(t1) teamNames.t1 = t1;
+            if(t2) teamNames.t2 = t2;
+
+            document.getElementById('label-t1').innerText = teamNames.t1;
+            document.getElementById('label-t2').innerText = teamNames.t2;
+            document.querySelectorAll('.name-t1').forEach(el => el.innerText = teamNames.t1);
+            document.querySelectorAll('.name-t2').forEach(el => el.innerText = teamNames.t2);
+
+            document.getElementById('setup-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'block';
+
+            buildBoard();
+        }
+
+        function buildBoard() {
+            let grid = document.getElementById('board-grid');
+            grid.innerHTML = '';
+
+            // Dynamically adjust grid columns depending on how many categories exist
+            grid.style.gridTemplateColumns = `repeat(${gameData.categories.length}, 1fr)`;
+
+            gameData.categories.forEach(cat => {
+                let header = document.createElement('div');
+                header.className = 'col-header';
+                
+                let imgHtml = cat.image ? `<img src="${cat.image}" alt="">` : '';
+                header.innerHTML = `${imgHtml}<span>${cat.name}</span>`;
+                
+                grid.appendChild(header);
+            });
+
+            let maxLen = Math.max(...gameData.categories.map(c => c.questions.length), 0);
+
+            for (let i = 0; i < maxLen; i++) {
+                gameData.categories.forEach((cat, cIndex) => {
+                    let tile = document.createElement('div');
+                    let qObj = cat.questions[i];
+                    
+                    if (qObj) {
+                        tile.className = 'tile';
+                        tile.innerText = qObj.points;
+                        tile.onclick = () => openQuestion(cIndex, i, tile);
+                    } else {
+                        tile.className = 'tile used';
+                        tile.innerText = "-";
+                    }
+                    grid.appendChild(tile);
+                });
+            }
+        }
+
+        function openQuestion(cIndex, qIndex, tileElement) {
+            if (tileElement.classList.contains('used')) return;
+            
+            activeTileElement = tileElement;
+            let qObj = gameData.categories[cIndex].questions[qIndex];
+            currentPoints = qObj.points;
+
+            document.getElementById('modal-points').innerText = `${currentPoints} نقطة`;
+            document.getElementById('modal-question-text').innerText = qObj.q;
+            document.getElementById('modal-answer-text').innerText = `الإجابة: ${qObj.a}`;
+            
+            document.getElementById('modal-answer-text').style.display = 'none';
+            document.getElementById('show-ans-btn').style.display = 'inline-block';
+            document.getElementById('scoring-controls').style.display = 'none';
+
+            document.getElementById('modal').style.display = 'flex';
+        }
+
+        function revealAnswer() {
+            document.getElementById('modal-answer-text').style.display = 'block';
+            document.getElementById('show-ans-btn').style.display = 'none';
+            document.getElementById('scoring-controls').style.display = 'block';
+        }
+
+        function awardPoints(teamNum) {
+            if (teamNum === 1) {
+                scores.t1 += currentPoints;
+                document.getElementById('score-t1').innerText = scores.t1;
+            } else {
+                scores.t2 += currentPoints;
+                document.getElementById('score-t2').innerText = scores.t2;
+            }
+            closeModal();
+        }
+
+        function closeModal() {
+            document.getElementById('modal').style.display = 'none';
+            if (activeTileElement) {
+                activeTileElement.classList.add('used');
+                activeTileElement.innerText = "✓";
+            }
+        }
+    </script>
+</body>
+</html>
