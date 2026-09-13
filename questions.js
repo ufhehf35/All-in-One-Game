@@ -233,3 +233,11 @@ let gameData = {
         }
     ]
 };
+function getGameData() {
+    let saved = localStorage.getItem('trivia_game_data');
+    if (saved) {
+        return JSON.parse(saved);
+    }
+    localStorage.setItem('trivia_game_data', JSON.stringify(gameData));
+    return gameData;
+}
